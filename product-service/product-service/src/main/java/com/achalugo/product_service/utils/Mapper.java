@@ -22,9 +22,8 @@ public class Mapper {
 
         product.setLocation(location);
         product.setStartingPrice(productRequest.getProductStartingPrice());
-        product.setCurrentBid(productRequest.getProductCurrentBid());
         product.setCategory(Category.valueOf(productRequest.getProductCategory()));
-        product.setStatus(Status.valueOf(productRequest.getProductStatus()));
+
         product.setStartTime(productRequest.getProductStartTime());
         product.setEndTime(productRequest.getProductEndTime());
 
@@ -38,6 +37,7 @@ public class Mapper {
         productResponse.setName(product.getName());
         productResponse.setDescription(product.getDescription());
         productResponse.setStartingPrice(product.getStartingPrice());
+
         productResponse.setCurrentBid(product.getCurrentBid());
         productResponse.setCategory(product.getCategory());
         productResponse.setStatus(product.getStatus());
