@@ -2,14 +2,16 @@ package com.achalugo.product_service.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Document("Product")
-@Data
+@Document("Products")
 
+@Data
 public class Product {
     @Id
     private String id;
@@ -22,5 +24,6 @@ public class Product {
     private Location location;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private String sellerId;
 
 }

@@ -16,8 +16,11 @@ import java.time.LocalDateTime;
 
 public class ProductRequest {
 
-
+    @NotBlank(message = "Name is required")
     private String productName;
+
+    @NotBlank(message = "SellerId is required")
+    private String sellerId;
 
     @NotBlank(message = "Description is required")
     private String productDescription;
@@ -44,7 +47,7 @@ public class ProductRequest {
     @Future(message = "Start time must be in the future")
     private LocalDateTime productStartTime;
 
-    
+
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     @NotNull(message = "Start time is required")

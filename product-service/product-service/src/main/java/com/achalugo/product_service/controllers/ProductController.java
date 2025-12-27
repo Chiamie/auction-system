@@ -2,12 +2,14 @@ package com.achalugo.product_service.controllers;
 
 
 import com.achalugo.product_service.dtos.requests.ProductRequest;
+import com.achalugo.product_service.dtos.requests.SearchRequest;
+import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
 import com.achalugo.product_service.models.Product;
-import com.achalugo.product_service.services.ProductService;
+import com.achalugo.product_service.services.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 public class ProductController {
 
 
-    private final  ProductService productService;
+    private final ProductServiceImpl productService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createProduct(@RequestBody ProductRequest productRequest) {
@@ -29,6 +31,32 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public List<ProductResponse> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void updateProduct(@RequestBody UpdateProductRequest updateProductRequest) {
+        productService.updateProduct(updateProductRequest);
+
+    }
+
+    @DeleteMapping("/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable String productId) {
+        productService.deleteProduct(productId);
+    }
+
+    @GetMapping("/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResponse getProductById(@PathVariable String productId) {
+        return productService.getProductById(productId);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProductsByCustomCriteria(@ModelAttribute SearchRequest searchRequest) {
+        List<Product> results = productService.searchProductsByCustomCriteria(searchRequest);
+        return ResponseEntity.ok(results);
+
     }
 
 
