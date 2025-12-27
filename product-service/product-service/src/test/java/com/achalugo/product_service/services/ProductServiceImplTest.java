@@ -9,6 +9,7 @@ import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
 import com.achalugo.product_service.data.repositories.ProductRepository;
+import com.achalugo.product_service.exceptions.InvalidProductIdException;
 import org.springframework.dao.DuplicateKeyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -145,11 +146,93 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void deleteProduct() {
+    void createProduct_countIsOne_deleteProduct_countIsZero() {
+        Product productOne = new Product();
+        productOne.setName("productName");
+        productOne.setDescription("productDescription");
+        productOne.setCategory(Category.ELECTRONICS);
+        productOne.setStartingPrice(BigDecimal.valueOf(1.000));
+        productOne.setSellerId("sellerOne");
+        productOne.setStatus(Status.UPCOMING);
+        Product createdProduct = productRepository.save(productOne);
+        assertEquals(1, productRepository.count());
+
+        productService.deleteProduct(createdProduct.getId());
+        assertEquals(0, productRepository.count());
     }
 
     @Test
-    void getProductById() {
+    void deleteProductWithWrongProductId_throwsException() {
+        Product productOne = new Product();
+        productOne.setName("productName");
+        productOne.setDescription("productDescription");
+        productOne.setCategory(Category.ELECTRONICS);
+        productOne.setStartingPrice(BigDecimal.valueOf(1.000));
+        productOne.setSellerId("sellerOne");
+        productOne.setStatus(Status.UPCOMING);
+        Product createdProduct = productRepository.save(productOne);
+        assertEquals(1, productRepository.count());
+
+
+        assertThrows(InvalidProductIdException.class, () -> productService.deleteProduct("Nne"));
+    }
+
+    @Test
+    void createProduct_countIsOne_updateStatusToOngoing_countIsStillOne_deleteProduct_throwsException() {
+        ProductRequest  productOne = new ProductRequest();
+        productOne.setProductName("productName");
+        productOne.setProductDescription("productDescription");
+        productOne.setProductCategory("Electronics");
+        productOne.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productOne.setSellerId("sellerOne");
+
+        CreateProductResponse createdProduct = productService.createProduct(productOne);
+        assertEquals(1, productRepository.count());
+
+        Product product = productRepository.findById(createdProduct.getProductId()).get();
+        product.setStatus(Status.ONGOING);
+        Product updatedProduct = productRepository.save(product);
+        assertEquals(1, productRepository.count());
+
+        assertThrows(IllegalStateException.class, () -> productService.deleteProduct(updatedProduct.getId()));
+    }
+
+    @Test
+    void createProduct_countIsOne_getProductById_returnsCreatedProduct() {
+        ProductRequest  productOne = new ProductRequest();
+        productOne.setProductName("productName");
+        productOne.setProductDescription("productDescription");
+        productOne.setProductCategory("Electronics");
+        productOne.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productOne.setSellerId("sellerOne");
+        productService.createProduct(productOne);
+
+        ProductRequest  productTwo = new ProductRequest();
+        productTwo.setProductName("productName2");
+        productTwo.setProductDescription("productDescription2");
+        productTwo.setProductCategory("Electronics");
+        productTwo.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productTwo.setSellerId("sellerOne2");
+
+        CreateProductResponse createdProduct = productService.createProduct(productTwo);
+        assertEquals(2, productRepository.count());
+
+        ProductResponse productResponse = productService.getProductById(createdProduct.getProductId());
+        assertEquals(createdProduct.getProductName(), productResponse.getName());
+    }
+
+    @Test
+    void createProduct_countIsOne_getProductByIdUsingWrong_throwsException() {
+        ProductRequest  productOne = new ProductRequest();
+        productOne.setProductName("productName");
+        productOne.setProductDescription("productDescription");
+        productOne.setProductCategory("Electronics");
+        productOne.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productOne.setSellerId("sellerOne");
+        productService.createProduct(productOne);
+
+        assertEquals(1, productRepository.count());
+        assertThrows(InvalidProductIdException.class, () -> productService.getProductById("Nne"));
     }
 
     @Test

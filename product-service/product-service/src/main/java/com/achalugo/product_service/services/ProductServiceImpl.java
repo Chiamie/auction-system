@@ -6,6 +6,7 @@ import com.achalugo.product_service.dtos.requests.SearchRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
+import com.achalugo.product_service.exceptions.InvalidProductIdException;
 import com.achalugo.product_service.exceptions.InvalidSearchParameterException;
 import com.achalugo.product_service.data.models.Category;
 import com.achalugo.product_service.data.models.Location;
@@ -77,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(String productId) {
         Optional<Product> product = productRepository.findById(productId);
         if (product.isEmpty()) {
-            throw new IllegalArgumentException("Product not found");
+            throw new InvalidProductIdException("Product {} not found", productId);
         }
         Product foundProduct = product.get();
         if (foundProduct.getStatus() == Status.UPCOMING) {
@@ -91,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getProductById(String productId) {
         Optional<Product> product = productRepository.findById(productId);
         if (product.isEmpty()) {
-            throw new IllegalArgumentException("Product not found");
+            throw new InvalidProductIdException("Product {} not found", productId);
         }
         Product foundProduct = product.get();
         return map(foundProduct);
