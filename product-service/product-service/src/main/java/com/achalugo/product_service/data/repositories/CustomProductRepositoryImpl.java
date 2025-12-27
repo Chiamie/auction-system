@@ -13,7 +13,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Repository
+
 public class CustomProductRepositoryImpl implements CustomProductRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -22,19 +24,24 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
     public List<Product> searchProduct(String name, Category productCategory, Status productStatus, Location location) {
         Criteria criteria = new Criteria();
         List<Criteria> criteriaList = new ArrayList<>();
-        if (name != null && name.isEmpty())
+        if (name != null && !name.isEmpty())
             criteriaList.add(Criteria.where("name").regex(name, "i"));
         if (productCategory != null)
-            criteriaList.add(Criteria.where("productCategory").is(productCategory));
+            criteriaList.add(Criteria.where("category").is(productCategory));
+
         if (productStatus != null)
-            criteriaList.add(Criteria.where("productStatus").is(productStatus));
+            criteriaList.add(Criteria.where("status").is(productStatus));
         if (location != null)
             criteriaList.add(Criteria.where("location").is(location));
         if (!criteriaList.isEmpty())
 //            criteria = criteriaList.get(0);
             criteria.andOperator(criteriaList.toArray(new Criteria[0]));
+
         Query query = new Query(criteria);
+//        System.out.println("MongoDB query: " + query);
         return mongoTemplate.find(query, Product.class);
+
+
     }
 
 }

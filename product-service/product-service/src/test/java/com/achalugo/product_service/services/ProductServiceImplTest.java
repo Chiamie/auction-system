@@ -5,6 +5,7 @@ import com.achalugo.product_service.data.models.Category;
 import com.achalugo.product_service.data.models.Product;
 import com.achalugo.product_service.data.models.Status;
 import com.achalugo.product_service.dtos.requests.ProductRequest;
+import com.achalugo.product_service.dtos.requests.SearchRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = ProductServiceApplication.class)
+
 class ProductServiceImplTest {
     @Autowired
     private ProductService productService;
@@ -233,6 +237,113 @@ class ProductServiceImplTest {
 
         assertEquals(1, productRepository.count());
         assertThrows(InvalidProductIdException.class, () -> productService.getProductById("Nne"));
+    }
+
+    @Test
+    void createFiveProducts_countIsFive_searchProductsByLocation_returnsProductsInThatLocation() {
+        ProductRequest  productOne = new ProductRequest();
+        productOne.setProductName("productName");
+        productOne.setProductDescription("productDescription");
+        productOne.setProductCity("city");
+        productOne.setProductState("state");
+        productOne.setProductCountry("country");
+        productOne.setSellerId("sellerTwo");
+        productOne.setProductCategory("Electronics");
+        productService.createProduct(productOne);
+
+        ProductRequest  productTwo = new ProductRequest();
+        productTwo.setProductName("productName2");
+        productTwo.setProductDescription("productDescription2");
+        productTwo.setProductCity("city2");
+        productTwo.setProductState("state2");
+        productTwo.setProductCountry("country2");
+        productTwo.setSellerId("sellerTwo");
+        productTwo.setProductCategory("Electronics");
+        productService.createProduct(productTwo);
+
+        ProductRequest  productThree = new ProductRequest();
+        productThree.setProductName("productName3");
+        productThree.setProductDescription("productDescription3");
+        productThree.setProductCity("city2");
+        productThree.setProductState("state2");
+        productThree.setProductCountry("country2");
+        productThree.setSellerId("sellerThree");
+        productThree.setProductCategory("Electronics");
+        productService.createProduct(productThree);
+
+        ProductRequest  productFour = new ProductRequest();
+        productFour.setProductName("productName4");
+        productFour.setProductDescription("productDescription4");
+        productFour.setProductCity("city2");
+        productFour.setProductState("state2");
+        productFour.setProductCountry("country2");
+        productFour.setSellerId("sellerFour");
+        productFour.setProductCategory("Electronics");
+        productService.createProduct(productFour);
+
+
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setCity("city");
+        searchRequest.setState("state");
+        searchRequest.setCountry("country");
+
+        List<Product> foundProductsByCategory = productService.searchProductsByCustomCriteria(searchRequest);
+        assertEquals(4, productRepository.count());
+        assertEquals(3, foundProductsByCategory.size());
+
+
+    }
+
+    @Test
+    void createFiveProducts_countIsFive_searchProductsByCategory_returnsProductsOfThatCategory() {
+        ProductRequest  productOne = new ProductRequest();
+        productOne.setProductName("productName");
+        productOne.setProductDescription("productDescription");
+        productOne.setProductCategory("Electronics");
+        productOne.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productOne.setSellerId("sellerOne");
+        productService.createProduct(productOne);
+
+        ProductRequest  productTwo = new ProductRequest();
+        productTwo.setProductName("productName2");
+        productTwo.setProductDescription("productDescription2");
+        productTwo.setProductCategory("Electronics");
+        productTwo.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productTwo.setSellerId("sellerTwo");
+        productService.createProduct(productTwo);
+
+        ProductRequest  productThree = new ProductRequest();
+        productThree.setProductName("productName3");
+        productThree.setProductDescription("productDescription3");
+        productThree.setProductCategory("Vehicles");
+        productThree.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productThree.setSellerId("sellerThree");
+        productService.createProduct(productThree);
+
+        ProductRequest  productFour = new ProductRequest();
+        productFour.setProductName("productName4");
+        productFour.setProductDescription("productDescription4");
+        productFour.setProductCategory("Electronics");
+        productFour.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productFour.setSellerId("sellerFour");
+        productService.createProduct(productFour);
+
+        ProductRequest  productFive = new ProductRequest();
+        productFive.setProductName("productName5");
+        productFive.setProductDescription("productDescription5");
+        productFive.setProductCategory("Vehicles");
+        productFive.setProductStartingPrice(BigDecimal.valueOf(1.000));
+        productFive.setSellerId("sellerFour");
+        productService.createProduct(productFive);
+
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setProductCategory("Electronics");
+
+        List<Product> foundProductsByCategory = productService.searchProductsByCustomCriteria(searchRequest);
+        assertEquals(5, productRepository.count());
+        assertEquals(3, foundProductsByCategory.size());
+
+
     }
 
     @Test

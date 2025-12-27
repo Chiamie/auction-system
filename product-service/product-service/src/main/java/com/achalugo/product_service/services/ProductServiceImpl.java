@@ -108,7 +108,9 @@ public class ProductServiceImpl implements ProductService {
         location.setCountry(searchRequest.getCountry());
 
         Category productCategory = getProductCategory(searchRequest);
+
         Status productStatus = getStatus(searchRequest);
+
 
         return productRepository.searchProduct(searchRequest.getName(), productCategory, productStatus, location);
 
@@ -116,20 +118,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private static Category getProductCategory(SearchRequest searchRequest) {
-       try {
-           return Category.valueOf(searchRequest.getProductCategory().toUpperCase());
-       } catch (IllegalArgumentException | NullPointerException e) {
-           throw new InvalidSearchParameterException(e.getMessage());
-       }
+//       try {
+//           return Category.valueOf(searchRequest.getProductCategory().toUpperCase());
+//       } catch (IllegalArgumentException | NullPointerException e) {
+//           throw new InvalidSearchParameterException(e.getMessage());
+//       }
+        if (searchRequest.getProductCategory() != null)
+            return Category.valueOf(searchRequest.getProductCategory().toUpperCase());
+        return null;
+
 
     }
 
     private static Status getStatus(SearchRequest searchRequest) {
-        try {
+//        try {
+//            return Status.valueOf(searchRequest.getProductStatus().toUpperCase());
+//        } catch (IllegalArgumentException | NullPointerException e) {
+//            throw new InvalidSearchParameterException("Invalid product status: " + searchRequest.getProductStatus());
+//        }
+        if(searchRequest.getProductStatus() != null)
             return Status.valueOf(searchRequest.getProductStatus().toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new InvalidSearchParameterException("Invalid product status: " + searchRequest.getProductStatus());
-        }
+        return null;
     }
 
 
