@@ -6,8 +6,12 @@ import lombok.Getter;
 
 @Getter
 public enum Status {
-    OPEN,
-    CLOSED,
+//    OPEN,
+//    CLOSED,
+//    SOLD
+    UPCOMING,
+    ONGOING,
+    ENDED,
     SOLD
 
 }
