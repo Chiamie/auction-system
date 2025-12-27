@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Document("Products")
-
+@CompoundIndex(name = "unique_value_per_seller", def = "{'sellerId': 1, 'name': 1, 'description': 1}", unique = true)
 @Data
 public class Product {
     @Id
