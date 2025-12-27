@@ -6,18 +6,15 @@ import com.achalugo.product_service.dtos.requests.SearchRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
-import com.achalugo.product_service.exceptions.DuplicateProductException;
 import com.achalugo.product_service.exceptions.InvalidSearchParameterException;
-import com.achalugo.product_service.models.Category;
-import com.achalugo.product_service.models.Location;
-import com.achalugo.product_service.models.Product;
-import com.achalugo.product_service.models.Status;
-import com.achalugo.product_service.repositories.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import com.achalugo.product_service.data.models.Category;
+import com.achalugo.product_service.data.models.Location;
+import com.achalugo.product_service.data.models.Product;
+import com.achalugo.product_service.data.models.Status;
+import com.achalugo.product_service.data.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +36,14 @@ public class ProductServiceImpl implements ProductService {
 //    }
 
     public CreateProductResponse createProduct(ProductRequest productRequest) {
-        boolean productExists = productRepository.existsBySellerIdAndNameAndDescription(
-                productRequest.getSellerId(),
-                productRequest.getProductName(),
-                productRequest.getProductDescription()
-        );
-        if  (productExists) {
-            throw new DuplicateProductException("You have already listed this product");
-        }
+//        boolean productExists = productRepository.existsBySellerIdAndNameAndDescription(
+//                productRequest.getSellerId(),
+//                productRequest.getProductName(),
+//                productRequest.getProductDescription()
+//        );
+//        if  (productExists) {
+//            throw new DuplicateProductException("You have already listed this product");
+//        }
         Product product = map(productRequest);
 
         Product savedProduct = productRepository.save(product);

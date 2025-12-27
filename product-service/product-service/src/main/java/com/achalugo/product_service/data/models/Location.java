@@ -1,4 +1,4 @@
-package com.achalugo.product_service.models;
+package com.achalugo.product_service.data.models;
 
 import lombok.Data;
 

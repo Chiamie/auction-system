@@ -4,8 +4,9 @@ package com.achalugo.product_service.controllers;
 import com.achalugo.product_service.dtos.requests.ProductRequest;
 import com.achalugo.product_service.dtos.requests.SearchRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
+import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
-import com.achalugo.product_service.models.Product;
+import com.achalugo.product_service.data.models.Product;
 import com.achalugo.product_service.services.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,8 @@ public class ProductController {
     private final ProductServiceImpl productService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProduct(@RequestBody ProductRequest productRequest) {
-        productService.createProduct(productRequest);
+    public CreateProductResponse createProduct(@RequestBody ProductRequest productRequest) {
+        return productService.createProduct(productRequest);
     }
 
     @GetMapping

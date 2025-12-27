@@ -1,8 +1,8 @@
 package com.achalugo.product_service.dtos.responses;
 
-import com.achalugo.product_service.models.Category;
-import com.achalugo.product_service.models.Location;
-import com.achalugo.product_service.models.Status;
+import com.achalugo.product_service.data.models.Category;
+import com.achalugo.product_service.data.models.Location;
+import com.achalugo.product_service.data.models.Status;
 import lombok.Data;
 
 import java.math.BigDecimal;

@@ -1,9 +1,9 @@
-package com.achalugo.product_service.repositories;
+package com.achalugo.product_service.data.repositories;
 
-import com.achalugo.product_service.models.Category;
-import com.achalugo.product_service.models.Location;
-import com.achalugo.product_service.models.Product;
-import com.achalugo.product_service.models.Status;
+import com.achalugo.product_service.data.models.Category;
+import com.achalugo.product_service.data.models.Location;
+import com.achalugo.product_service.data.models.Product;
+import com.achalugo.product_service.data.models.Status;
 
 import java.util.List;
 

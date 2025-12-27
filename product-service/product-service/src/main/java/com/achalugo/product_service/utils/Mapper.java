@@ -4,10 +4,9 @@ import com.achalugo.product_service.dtos.requests.ProductRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
-import com.achalugo.product_service.models.Category;
-import com.achalugo.product_service.models.Location;
-import com.achalugo.product_service.models.Product;
-import com.achalugo.product_service.models.Status;
+import com.achalugo.product_service.data.models.Category;
+import com.achalugo.product_service.data.models.Location;
+import com.achalugo.product_service.data.models.Product;
 
 public class Mapper {
 
@@ -62,18 +61,23 @@ public class Mapper {
 
     public static Product map(Product foundProduct, UpdateProductRequest updateProductRequest) {
 
-        foundProduct.setName(updateProductRequest.getProductName());
-        foundProduct.setDescription(updateProductRequest.getProductDescription());
-        foundProduct.setCategory(Category.valueOf(updateProductRequest.getProductCategory()));
-        foundProduct.setStartingPrice(updateProductRequest.getProductStartingPrice());
-        foundProduct.setStartTime(updateProductRequest.getProductStartTime());
-        foundProduct.setEndTime(updateProductRequest.getProductEndTime());
+        if(updateProductRequest.getProductName()!= null)
+            foundProduct.setName(updateProductRequest.getProductName());
+        if(updateProductRequest.getProductDescription()!= null)
+            foundProduct.setDescription(updateProductRequest.getProductDescription());
+        if (updateProductRequest.getProductCategory() != null )foundProduct.setCategory(Category.valueOf(updateProductRequest.getProductCategory().toUpperCase()));
+        if (updateProductRequest.getProductStartingPrice() != null )foundProduct.setStartingPrice(updateProductRequest.getProductStartingPrice());
+        if (updateProductRequest.getProductStartTime() != null )foundProduct.setStartTime(updateProductRequest.getProductStartTime());
+        if (updateProductRequest.getProductEndTime() != null )foundProduct.setEndTime(updateProductRequest.getProductEndTime());
+
 
         Location location = foundProduct.getLocation();
-        location.setCity(updateProductRequest.getProductCity());
-        location.setState(updateProductRequest.getProductState());
-        location.setCountry(updateProductRequest.getProductCountry());
-
+        if(updateProductRequest.getProductCity() != null)
+            location.setCity(updateProductRequest.getProductCity());
+        if(updateProductRequest.getProductState() != null)
+            location.setState(updateProductRequest.getProductState());
+        if(updateProductRequest.getProductCountry() != null)
+            location.setCountry(updateProductRequest.getProductCountry());
         foundProduct.setLocation(location);
 
         return foundProduct;

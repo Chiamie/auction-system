@@ -5,7 +5,7 @@ import com.achalugo.product_service.dtos.requests.SearchRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
-import com.achalugo.product_service.models.Product;
+import com.achalugo.product_service.data.models.Product;
 
 import java.util.List;
 
