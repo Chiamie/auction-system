@@ -48,13 +48,15 @@ public class Mapper {
         productResponse.setId(product.getId());
         productResponse.setName(product.getName());
         productResponse.setDescription(product.getDescription());
+        productResponse.setLocation(String.valueOf(product.getLocation()));
         productResponse.setStartingPrice(product.getStartingPrice());
 
         productResponse.setCurrentBid(product.getCurrentBid());
-        productResponse.setCategory(product.getCategory());
-        productResponse.setStatus(product.getStatus());
+        productResponse.setCategory(String.valueOf(product.getCategory()));
+        productResponse.setStatus(String.valueOf(product.getStatus()));
         productResponse.setStartTime(product.getStartTime());
         productResponse.setEndTime(product.getEndTime());
+
         return productResponse;
 
     }

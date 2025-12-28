@@ -6,6 +6,7 @@ import com.achalugo.product_service.dtos.requests.SearchRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
+import com.achalugo.product_service.dtos.responses.UpdateProductStatusReponse;
 import com.achalugo.product_service.exceptions.InvalidProductIdException;
 import com.achalugo.product_service.exceptions.InvalidSearchParameterException;
 import com.achalugo.product_service.data.models.Category;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -113,8 +115,28 @@ public class ProductServiceImpl implements ProductService {
 
 
         return productRepository.searchProduct(searchRequest.getName(), productCategory, productStatus, location);
+    }
 
+    public UpdateProductStatusReponse updateProductStatus(Product product){
+        Status currentStatus = getProductStatus(product);
+        if (product.getStatus() != currentStatus) {
+            product.setStatus(currentStatus);
+            productRepository.save(product);
+            log.info("Product Status has been updated");
+        }
 
+        return new UpdateProductStatusReponse();
+    }
+
+    private Status getProductStatus(Product product){
+        LocalDateTime currentTime = LocalDateTime.now();
+//        if (currentTime.isBefore(product.getStartTime())) return Status.UPCOMING;
+//        else if (currentTime.isAfter(product.getStartTime()) && currentTime.isBefore(product.getEndTime())) return Status.ONGOING;
+//        else if (currentTime.isAfter(product.getEndTime())) return Status.ENDED;
+//        return Status.SOLD;
+        if(currentTime.isBefore(product.getStartTime())) return Status.UPCOMING;
+        else if(currentTime.isAfter(product.getEndTime())) return Status.ENDED;
+        else return Status.ONGOING;
     }
 
     private static Category getProductCategory(SearchRequest searchRequest) {

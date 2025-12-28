@@ -1,11 +1,13 @@
 package com.achalugo.product_service.services;
 
+import com.achalugo.product_service.data.models.Status;
 import com.achalugo.product_service.dtos.requests.ProductRequest;
 import com.achalugo.product_service.dtos.requests.SearchRequest;
 import com.achalugo.product_service.dtos.requests.UpdateProductRequest;
 import com.achalugo.product_service.dtos.responses.CreateProductResponse;
 import com.achalugo.product_service.dtos.responses.ProductResponse;
 import com.achalugo.product_service.data.models.Product;
+import com.achalugo.product_service.dtos.responses.UpdateProductStatusReponse;
 
 import java.util.List;
 
@@ -16,4 +18,5 @@ public interface ProductService {
     void deleteProduct(String productId);
     ProductResponse getProductById(String productId);
     List<Product> searchProductsByCustomCriteria(SearchRequest searchRequest);
+    UpdateProductStatusReponse updateProductStatus(Product product);
 }

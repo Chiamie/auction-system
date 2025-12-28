@@ -15,9 +15,9 @@ public class ProductResponse {
     private String description;
     private BigDecimal startingPrice;
     private BigDecimal currentBid;
-    private Category category;
-    private Status status;
-    private Location location;
+    private String category;
+    private String status;
+    private String location;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 }

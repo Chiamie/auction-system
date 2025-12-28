@@ -53,6 +53,8 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
+
+
     @GetMapping("/search")
     public ResponseEntity<?> searchProductsByCustomCriteria(@ModelAttribute SearchRequest searchRequest) {
         List<Product> results = productService.searchProductsByCustomCriteria(searchRequest);
