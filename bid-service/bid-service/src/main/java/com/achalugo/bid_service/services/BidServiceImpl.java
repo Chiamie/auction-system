@@ -29,7 +29,7 @@ public class BidServiceImpl implements BidService {
 
     @Override
     public PlaceBidResponse placeBid(PlaceBidRequest placeBidRequest) {
-        ProductResponse product = validateProduct(placeBidRequest);
+        ProductResponse product = validateProduct(placeBidRequest.getProductId());
         validateAuction(product);
 
         BigDecimal currentBid = product.getCurrentBid() != null ? product.getCurrentBid() : product.getStartingPrice();
@@ -49,14 +49,20 @@ public class BidServiceImpl implements BidService {
         return  map(savedBid);
     }
 
+    public BigDecimal getCurrentHighestBid(String productId) {
+
+        ProductResponse product = validateProduct(productId);
+        return product.getCurrentBid() != null ? product.getCurrentBid() : product.getStartingPrice();
+    }
+
     private static void validateAuction(ProductResponse product) {
         if (!Objects.equals(product.getStatus(), "Ongoing"))
             throw new IllegalStateException("Auction is not ongoing");
     }
 
-    private ProductResponse validateProduct(PlaceBidRequest placeBidRequest) {
+    private ProductResponse validateProduct(String productId) {
         try {
-            return productServiceClient.getProductById(placeBidRequest.getProductId());
+            return productServiceClient.getProductById(productId);
         } catch (FeignException.NotFound e) {
             throw new ProductNotFoundException("Product not found");
         }
