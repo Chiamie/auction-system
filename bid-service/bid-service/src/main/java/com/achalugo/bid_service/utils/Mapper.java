@@ -1,6 +1,7 @@
 package com.achalugo.bid_service.utils;
 
 import com.achalugo.bid_service.data.models.Bid;
+import com.achalugo.bid_service.dtos.Reponses.GetBidResponse;
 import com.achalugo.bid_service.dtos.Reponses.PlaceBidResponse;
 
 public class Mapper {
@@ -10,6 +11,18 @@ public class Mapper {
         placeBidResponse.setBidId(savedBid.getId());
         placeBidResponse.setUserId(savedBid.getBidderId());
         placeBidResponse.setAmount(savedBid.getAmount());
+        placeBidResponse.setTimestamp(savedBid.getTimestamp() + "");
         return placeBidResponse;
     };
+
+    public static GetBidResponse mapToRetrieveBidOnProduct (Bid foundBid){
+        GetBidResponse getBidResponse = new GetBidResponse();
+        getBidResponse.setBidId(foundBid.getId());
+        getBidResponse.setBidderId(foundBid.getBidderId());
+        getBidResponse.setAmount(foundBid.getAmount());
+        getBidResponse.setTimestamp(foundBid.getTimestamp() + "");
+        getBidResponse.setProductId(foundBid.getProductId());
+        return getBidResponse;
+
+    }
 }

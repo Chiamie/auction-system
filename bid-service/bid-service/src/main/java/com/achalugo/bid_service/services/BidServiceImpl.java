@@ -2,6 +2,7 @@ package com.achalugo.bid_service.services;
 
 import com.achalugo.bid_service.data.models.Bid;
 import com.achalugo.bid_service.data.repositories.BidRepository;
+import com.achalugo.bid_service.dtos.Reponses.GetBidResponse;
 import com.achalugo.bid_service.dtos.Reponses.PlaceBidResponse;
 import com.achalugo.bid_service.dtos.Reponses.ProductResponse;
 import com.achalugo.bid_service.dtos.Requests.PlaceBidRequest;
@@ -12,9 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static com.achalugo.bid_service.utils.Mapper.map;
+import static com.achalugo.bid_service.utils.Mapper.mapToRetrieveBidOnProduct;
 
 @Service
 public class BidServiceImpl implements BidService {
@@ -53,6 +57,16 @@ public class BidServiceImpl implements BidService {
 
         ProductResponse product = validateProduct(productId);
         return product.getCurrentBid() != null ? product.getCurrentBid() : product.getStartingPrice();
+    }
+
+    public List<GetBidResponse> getBidsOf(String productId){
+        List<Bid> foundBidsOfProduct = bidRepository.findBidsByProductId(productId);
+
+        List<GetBidResponse> getBidResponseList = new ArrayList<>();
+        for (Bid foundBid : foundBidsOfProduct) {
+            getBidResponseList.add(mapToRetrieveBidOnProduct(foundBid));
+        }
+        return getBidResponseList;
     }
 
     private static void validateAuction(ProductResponse product) {
