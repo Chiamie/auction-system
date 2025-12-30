@@ -4,6 +4,7 @@ import com.achalugo.auction_service.data.models.Auction;
 import com.achalugo.auction_service.data.models.Status;
 import com.achalugo.auction_service.data.repositories.AuctionRepository;
 import com.achalugo.auction_service.dtos.responses.AuctionUpdateStatusResponse;
+import com.achalugo.auction_service.dtos.responses.HighestBidResponse;
 import com.achalugo.auction_service.dtos.responses.WinnerResponse;
 import com.achalugo.auction_service.exceptions.AuctionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Autowired
     AuctionRepository  auctionRepository;
+
+    @Autowired
+    BidServiceClient  bidServiceClient;
+
 
     public AuctionUpdateStatusResponse updateAuctionStatus(String auctionId) {
         Auction auction = getAuction(auctionId);
@@ -44,14 +49,25 @@ public class AuctionServiceImpl implements AuctionService {
 
     public WinnerResponse determineWinner(String auctionId){
         Auction auction = getAuction(auctionId);
-        if(!auction.getStatus().equals(Status.ENDED))
-            throw new IllegalStateException("Auction has not ended");
-        
+        hasEnded(auction);
+        HighestBidResponse highestBid = bidServiceClient.getHighestBid(auctionId);
+        validate(highestBid);
+        auction.setWinnerId(highestBid.getBidderId());
+        auctionRepository.save(auction);
+
 
     }
 
+    private static void validate(HighestBidResponse highestBid) {
+        if (highestBid == null || highestBid.getBidderId() == null) {
+            throw new RuntimeException("No bids placed for this auction");
+        }
+    }
 
-
+    private static void hasEnded(Auction auction) {
+        if(!auction.getStatus().equals(Status.ENDED))
+            throw new IllegalStateException("Auction has not ended");
+    }
 
 
     private Auction getAuction(String auctionId) {
