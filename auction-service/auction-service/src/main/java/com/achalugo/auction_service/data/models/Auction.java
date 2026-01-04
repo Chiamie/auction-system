@@ -11,6 +11,7 @@ public class Auction {
     @Id
     private String id;
     private String productId;
+    private BigDecimal startingPrice;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Status status;

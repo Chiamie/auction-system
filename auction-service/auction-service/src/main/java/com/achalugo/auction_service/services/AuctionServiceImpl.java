@@ -1,13 +1,17 @@
 package com.achalugo.auction_service.services;
 
+
+import com.achalugo.auction_service.dtos.requests.CreateAuctionRequest;
+import com.achalugo.sharedevents.events.AuctionEndedEvent;
+
 import com.achalugo.auction_service.data.models.Auction;
 import com.achalugo.auction_service.data.models.Status;
 import com.achalugo.auction_service.data.repositories.AuctionRepository;
-import com.achalugo.auction_service.dtos.responses.AuctionUpdateStatusResponse;
-import com.achalugo.auction_service.dtos.responses.HighestBidResponse;
-import com.achalugo.auction_service.dtos.responses.WinnerResponse;
+import com.achalugo.auction_service.dtos.responses.*;
 import com.achalugo.auction_service.exceptions.AuctionNotFoundException;
+import com.achalugo.sharedevents.events.AuctionStartingSoonEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,14 +19,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.achalugo.auction_service.utils.Mapper.map;
+
+
 @Service
 public class AuctionServiceImpl implements AuctionService {
 
     @Autowired
-    AuctionRepository  auctionRepository;
+    private AuctionRepository  auctionRepository;
 
     @Autowired
-    BidServiceClient  bidServiceClient;
+    private BidServiceClient  bidServiceClient;
+
+    @Autowired
+    private ProductServiceClient  productServiceClient;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+
+
+    public CreateAuctionResponse createAuction(CreateAuctionRequest createAuctionRequest){
+        Auction auction = map(createAuctionRequest);
+        Auction savedAuction = auctionRepository.save(auction);
+        return map(savedAuction);
+    }
 
 
     public AuctionUpdateStatusResponse updateAuctionStatus(String auctionId) {
@@ -36,11 +57,18 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     public void updateCurrentBid(String auctionId, BigDecimal amount){
-        Auction foundAuction = getAuction(auctionId);
-        if(amount.compareTo(foundAuction.getCurrentBid()) > 0){
-            foundAuction.setCurrentBid(amount);
-            auctionRepository.save(foundAuction);
+        CurrentHighestBidResponse currentHighestBidResponse = getCurrentHighestBid(auctionId);
+        Auction auction = currentHighestBidResponse.getAuction();
+        if(amount.compareTo(currentHighestBidResponse.getCurrentHighestBid()) > 0){
+            auction.setCurrentBid(amount);
+            auctionRepository.save(auction);
         }
+    }
+
+    private CurrentHighestBidResponse getCurrentHighestBid(String auctionId) {
+        Auction foundAuction = getAuction(auctionId);
+        BigDecimal currentHighestBid = foundAuction.getCurrentBid() != null ? foundAuction.getCurrentBid() : foundAuction.getStartingPrice();
+        return map(currentHighestBid, foundAuction);
     }
 
     public List<Auction> getAllAuctions(){
@@ -50,13 +78,70 @@ public class AuctionServiceImpl implements AuctionService {
     public WinnerResponse determineWinner(String auctionId){
         Auction auction = getAuction(auctionId);
         hasEnded(auction);
+
         HighestBidResponse highestBid = bidServiceClient.getHighestBid(auctionId);
         validate(highestBid);
         auction.setWinnerId(highestBid.getBidderId());
         auctionRepository.save(auction);
 
-
+        return new WinnerResponse();
     }
+
+    public ProductDetailsResponse determineProductDetails (String auctionId){
+        Auction auction = getAuction(auctionId);
+        hasEnded(auction);
+        ProductResponse product = productServiceClient.getProductById(auction.getProductId());
+        String productName = product.getName();
+        String sellerId = product.getSellerId();
+
+        return map(productName, sellerId);
+    }
+
+    public void publishAuctionEnded(String auctionId){
+        Auction auction = getAuction(auctionId);
+        String winnerId = auction.getWinnerId();
+        ProductDetailsResponse productDetailsResponse = determineProductDetails(auctionId);
+
+        String sellerId = productDetailsResponse.getSellerId();
+        String productName = productDetailsResponse.getProductName();
+
+        AuctionEndedEvent event = new AuctionEndedEvent();
+        event.setAuctionId(auctionId);
+        event.setWinnerId(winnerId);
+        event.setSellerId(sellerId);
+        event.setProductName(productName);
+
+        eventPublisher.publishEvent(event);
+    }
+
+    public void publishAuctionStartingSoon(String auctionId){
+        Auction auction = getAuction(auctionId);
+        String productId = auction.getProductId();
+        ProductDetailsResponse productDetailsResponse = determineProductDetails(auctionId);
+
+        String sellerId = productDetailsResponse.getSellerId();
+        String productName = productDetailsResponse.getProductName();
+
+        AuctionStartingSoonEvent event = new AuctionStartingSoonEvent();
+        event.setAuctionId(auctionId);
+        event.setProductName(productName);
+        event.setSellerId(sellerId);
+
+        eventPublisher.publishEvent(event);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private static void validate(HighestBidResponse highestBid) {
         if (highestBid == null || highestBid.getBidderId() == null) {

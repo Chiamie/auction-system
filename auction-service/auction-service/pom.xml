@@ -8,7 +8,7 @@
 		<version>4.0.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.achalugo</groupId>
+<!--	<groupId>com.achalugo</groupId>-->
 	<artifactId>auction-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>auction-service</name>
@@ -58,6 +58,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.achalugo</groupId>
+            <artifactId>shared-events</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 	</dependencies>
 
