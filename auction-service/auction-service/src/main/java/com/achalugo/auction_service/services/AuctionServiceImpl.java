@@ -2,6 +2,9 @@ package com.achalugo.auction_service.services;
 
 
 import com.achalugo.auction_service.dtos.requests.CreateAuctionRequest;
+import com.achalugo.auction_service.exceptions.InvalidStartTimeException;
+import com.achalugo.auction_service.exceptions.MismatchedProductToSellerException;
+import com.achalugo.auction_service.exceptions.ProductNotFoundException;
 import com.achalugo.sharedevents.events.AuctionEndedEvent;
 
 import com.achalugo.auction_service.data.models.Auction;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.achalugo.auction_service.utils.Mapper.map;
@@ -40,9 +44,32 @@ public class AuctionServiceImpl implements AuctionService {
 
 
     public CreateAuctionResponse createAuction(CreateAuctionRequest createAuctionRequest){
+        ProductResponse product = getProduct(createAuctionRequest);
+        validateProductToSeller(createAuctionRequest, product);
+        validateAuctionPeriod(createAuctionRequest);
         Auction auction = map(createAuctionRequest);
         Auction savedAuction = auctionRepository.save(auction);
         return map(savedAuction);
+    }
+
+    private static void validateAuctionPeriod(CreateAuctionRequest createAuctionRequest) {
+        if(!createAuctionRequest.getStartTime().isAfter(createAuctionRequest.getEndTime())) {
+            throw new InvalidStartTimeException("Start Time must be before End Time");
+        }
+    }
+
+    private static void validateProductToSeller(CreateAuctionRequest createAuctionRequest, ProductResponse product) {
+        if(!Objects.equals(createAuctionRequest.getSellerId(), product.getSellerId())){
+            throw new MismatchedProductToSellerException("Product not owned by seller");
+        }
+    }
+
+    private ProductResponse getProduct(CreateAuctionRequest createAuctionRequest) {
+        ProductResponse product =  productServiceClient.getProductById(createAuctionRequest.getProductId());
+        if(product == null){
+            throw new ProductNotFoundException("Product with" + createAuctionRequest.getProductId() + "does not exist");
+        }
+        return product;
     }
 
 

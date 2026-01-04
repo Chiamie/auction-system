@@ -9,10 +9,11 @@ import java.time.LocalDateTime;
 @Data
 public class CreateAuctionRequest {
     private String productId;
+    private String sellerId;
     private Long startingPrice;
-    private String startTime;
-    private String endTime;
-    private String status;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
 
 
 }

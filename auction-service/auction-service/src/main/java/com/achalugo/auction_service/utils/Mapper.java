@@ -16,10 +16,10 @@ public class Mapper {
 
         Auction auction = new Auction();
         auction.setProductId(createAuctionRequest.getProductId());
-        auction.setStatus(Status.valueOf(createAuctionRequest.getStatus()));
+        auction.setStatus(Status.UPCOMING);
         auction.setStartingPrice(BigDecimal.valueOf(createAuctionRequest.getStartingPrice()));
-        auction.setStartTime(LocalDateTime.parse(createAuctionRequest.getStartTime()));
-        auction.setEndTime(LocalDateTime.parse(createAuctionRequest.getEndTime()));
+        auction.setStartTime(createAuctionRequest.getStartTime());
+        auction.setEndTime(createAuctionRequest.getEndTime());
         return  auction;
     }
 

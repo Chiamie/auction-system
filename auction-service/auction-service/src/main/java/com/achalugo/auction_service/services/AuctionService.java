@@ -18,5 +18,7 @@ public interface AuctionService {
     List<Auction> getAllAuctions();
     WinnerResponse determineWinner(String auctionId);
     ProductDetailsResponse determineProductDetails(String auctionId);
+    void publishAuctionEnded(String auctionId);
+    void publishAuctionStartingSoon(String auctionId);
 
 }
