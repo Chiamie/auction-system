@@ -1,10 +1,9 @@
 package com.achalugo.auction_service.services.schedulers;
 
 import com.achalugo.auction_service.data.models.Auction;
-import com.achalugo.auction_service.data.models.Status;
 import com.achalugo.auction_service.data.repositories.AuctionRepository;
-import com.achalugo.auction_service.dtos.requests.AuctionUpdateStatusRequest;
 import com.achalugo.auction_service.services.AuctionService;
+import com.achalugo.sharedevents.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -62,7 +61,7 @@ public class ActionScheduler {
         }
 
 
-        
+
 
     }
 

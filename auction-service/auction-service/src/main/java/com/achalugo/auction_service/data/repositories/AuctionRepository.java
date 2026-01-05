@@ -1,7 +1,7 @@
 package com.achalugo.auction_service.data.repositories;
 
 import com.achalugo.auction_service.data.models.Auction;
-import com.achalugo.auction_service.data.models.Status;
+import com.achalugo.sharedevents.enums.Status;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.LocalDateTime;

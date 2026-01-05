@@ -1,9 +1,7 @@
 package com.achalugo.auction_service.dtos.requests;
 
-import com.achalugo.auction_service.data.models.Status;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data

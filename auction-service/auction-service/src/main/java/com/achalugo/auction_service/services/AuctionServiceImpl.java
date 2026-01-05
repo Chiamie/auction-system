@@ -5,10 +5,10 @@ import com.achalugo.auction_service.dtos.requests.CreateAuctionRequest;
 import com.achalugo.auction_service.exceptions.InvalidStartTimeException;
 import com.achalugo.auction_service.exceptions.MismatchedProductToSellerException;
 import com.achalugo.auction_service.exceptions.ProductNotFoundException;
+import com.achalugo.sharedevents.enums.Status;
 import com.achalugo.sharedevents.events.AuctionEndedEvent;
 
 import com.achalugo.auction_service.data.models.Auction;
-import com.achalugo.auction_service.data.models.Status;
 import com.achalugo.auction_service.data.repositories.AuctionRepository;
 import com.achalugo.auction_service.dtos.responses.*;
 import com.achalugo.auction_service.exceptions.AuctionNotFoundException;
@@ -114,7 +114,7 @@ public class AuctionServiceImpl implements AuctionService {
         return new WinnerResponse();
     }
 
-    public ProductDetailsResponse determineProductDetails (String auctionId){
+    private ProductDetailsResponse determineProductDetails (String auctionId){
         Auction auction = getAuction(auctionId);
         hasEnded(auction);
         ProductResponse product = productServiceClient.getProductById(auction.getProductId());

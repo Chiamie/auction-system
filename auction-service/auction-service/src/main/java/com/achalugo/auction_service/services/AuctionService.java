@@ -17,7 +17,6 @@ public interface AuctionService {
     void updateCurrentBid(String auctionId, BigDecimal amount);
     List<Auction> getAllAuctions();
     WinnerResponse determineWinner(String auctionId);
-    ProductDetailsResponse determineProductDetails(String auctionId);
     void publishAuctionEnded(String auctionId);
     void publishAuctionStartingSoon(String auctionId);
 

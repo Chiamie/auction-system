@@ -1,5 +1,6 @@
 package com.achalugo.auction_service.data.models;
 
+import com.achalugo.sharedevents.enums.Status;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
